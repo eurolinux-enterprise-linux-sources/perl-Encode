@@ -1,11 +1,13 @@
 Name:           perl-Encode
 Version:        2.51
-Release:        3%{?dist}
+Release:        7%{?dist}
 Summary:        Character encodings in Perl
 License:        GPL+ or Artistic
 Group:          Development/Libraries
 URL:            http://search.cpan.org/dist/Encode/
 Source0:        http://www.cpan.org/authors/id/D/DA/DANKOGAI/Encode-%{version}.tar.gz
+# Stringify all decode_utf8() arguments, bug #1048147, CPAN RT#91569, in 2.56
+Patch0:         Encode-2.51-Stringify-all-decode_utf8-arguments.patch
 BuildRequires:  perl
 BuildRequires:  perl(ExtUtils::MakeMaker)
 BuildRequires:  perl(File::Spec)
@@ -71,6 +73,7 @@ your own encoding to perl. No knowledge of XS is necessary.
 
 %prep
 %setup -q -n Encode-%{version}
+%patch0 -p1
 
 %build
 # Additional scripts can be installed by appending MORE_SCRIPTS, UCM files by
@@ -105,6 +108,19 @@ make test
 %{perl_vendorarch}/Encode/encode.h
 
 %changelog
+* Fri Jan 24 2014 Daniel Mach <dmach@redhat.com> - 2.51-7
+- Mass rebuild 2014-01-24
+
+* Tue Jan 07 2014 Petr Pisar <ppisar@redhat.com> - 2.51-6
+- Rebuild against "file" package fixed by Jan Kaluza to correct run-time
+  dependencies (bug #1048910)
+
+* Fri Jan 03 2014 Petr Pisar <ppisar@redhat.com> - 2.51-5
+- Stringify all decode_utf8() arguments (bug #1048147)
+
+* Fri Dec 27 2013 Daniel Mach <dmach@redhat.com> - 2.51-4
+- Mass rebuild 2013-12-27
+
 * Fri Jul 26 2013 Petr Pisar <ppisar@redhat.com> - 2.51-3
 - Specify more dependencies
 

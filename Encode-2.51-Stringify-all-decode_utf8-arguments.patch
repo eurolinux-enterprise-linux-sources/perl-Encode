@@ -1,0 +1,64 @@
+From eae18e8bf5fc57ca4e6a07f086fd7205e9c87ed4 Mon Sep 17 00:00:00 2001
+From: Dan Kogai <dankogai+github@gmail.com>
+Date: Sun, 22 Dec 2013 13:07:05 +0900
+Subject: [PATCH] Stringify all decode_utf8() arguments
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Upstream commit:
+
+commit 14307cf7e433056128727f5d738ee317ef05b016
+Author: Dan Kogai <dankogai+github@gmail.com>
+Date:   Sun Dec 22 13:07:05 2013 +0900
+
+    VERSION 2.56
+
+ported to 2.51.
+
+Signed-off-by: Petr Písař <ppisar@redhat.com>
+---
+ Encode.pm  | 2 +-
+ t/Encode.t | 6 +++++-
+ 2 files changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/Encode.pm b/Encode.pm
+index 5c30031..b0272ad 100644
+--- a/Encode.pm
++++ b/Encode.pm
+@@ -211,7 +211,7 @@ sub decode_utf8($;$) {
+     my ( $octets, $check ) = @_;
+     return $octets if is_utf8($octets);
+     return undef unless defined $octets;
+-    $octets .= '' if ref $octets;
++    $octets .= '';
+     $check   ||= 0;
+     $utf8enc ||= find_encoding('utf8');
+     my $string = $utf8enc->decode( $octets, $check );
+diff --git a/t/Encode.t b/t/Encode.t
+index 918975e..d490255 100644
+--- a/t/Encode.t
++++ b/t/Encode.t
+@@ -25,7 +25,7 @@ my @character_set = ('0'..'9', 'A'..'Z', 'a'..'z');
+ my @source = qw(ascii iso8859-1 cp1250);
+ my @destiny = qw(cp1047 cp37 posix-bc);
+ my @ebcdic_sets = qw(cp1047 cp37 posix-bc);
+-plan test => 38+$n*@encodings + 2*@source*@destiny*@character_set + 2*@ebcdic_sets*256 + 6 + 4;
++plan test => 38+$n*@encodings + 2*@source*@destiny*@character_set + 2*@ebcdic_sets*256 + 6 + 5;
+ my $str = join('',map(chr($_),0x20..0x7E));
+ my $cpy = $str;
+ ok(length($str),from_to($cpy,'iso8859-1','Unicode'),"Length Wrong");
+@@ -150,6 +150,10 @@ package main;
+ ok(decode(latin1 => Encode::Dummy->new("foobar")), "foobar");
+ ok(encode(utf8   => Encode::Dummy->new("foobar")), "foobar");
+ 
++# RT#91569
++# decode_utf8 with non-string arguments
++ok(decode_utf8(*1), "*main::1");
++
+ # hash keys
+ my $key = (keys %{{ "whatever\x{100}" => '' }})[0];
+ my $kopy = $key;
+-- 
+1.8.3.1
+
